@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+
 import TopBar from './topbar.js';
 import CryptoList from './cryptoinfo/crypolist.js';
 import FavoriteCrypto from './cryptoinfo/favcrypto.js';
@@ -12,6 +14,8 @@ const useStyles= makeStyles({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    position: 'absolute',
+    bottom: '0',
   },
 });
 
@@ -27,9 +31,7 @@ function Home() {
           <FavoriteCrypto />
           </Grid>
           <Grid item>
-            <div className={classes.stickBottom}>
-              <CryptoList />
-            </div>
+            <CryptoList />
           </Grid>
         </Grid>
       </div>
