@@ -4,6 +4,8 @@ import store from "./redux/store/index";
 
 import { SWRConfig } from 'swr';
 
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+
 import './App.css';
 import Home from './home';
 
@@ -14,6 +16,14 @@ const fetcher = url => fetch(url, {
   headers: { 'X-CoinAPI-Key': 'FF5D3F62-6505-4EBA-81DC-5127E4B34380' }
 }).then(r => r.json());
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#007aa5'
+    },
+  },
+});
+
 function App() {
   return (
       <SWRConfig
@@ -22,7 +32,9 @@ function App() {
           fetcher: fetcher
         }}
       >
-        <Home />
+        <ThemeProvider theme={theme}>
+          <Home />
+        </ThemeProvider>
       </SWRConfig>
   );
 }

@@ -17,7 +17,16 @@ function Home() {
   const { data: dataicon } = useSWR('https://rest.coinapi.io/v1/assets/icons/16?', { refreshInterval: 0 });
 
   if (datacrypto === undefined || dataicon === undefined)
-    return (<CircularProgress />);
+    return (
+      <div style={{
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <CircularProgress />
+      </div>
+    );
 
   if (rows.length === 0) {
     setRows(datacrypto
@@ -35,13 +44,14 @@ function Home() {
     );
   }
 
-  store.dispatch(updateCrypto(rows));
+  store.dispatch(updateCrypto(new Array(['potate', 'tomate'])));
 
   return (
     <>
       <TopBar />
       <div style={{
-        display:  'flex',
+        height: '90vh',
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
       }}>

@@ -18,3 +18,15 @@ export const CryptoListModalContent = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+export const CryptoListCryptoName = styled.span`
+  padding: 0 5px 0 5px;
+  font-weight: bold;
+  font-size: 1.1em;
+  color: ${props => props.color ? props.color : '#addfad'};
+`;
+
+export const CryptoListInputError = styled.span`
+  color: #f44336;
+  display: block;
+`;

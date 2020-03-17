@@ -4,6 +4,8 @@ import {
   CryptoListContainer,
   CryptoListTableContainer,
   CryptoListModalContent,
+  CryptoListCryptoName,
+  CryptoListInputError,
 } from './CryptoListStyle';
 
 import store from "../redux/store/index";
@@ -35,6 +37,7 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import MaterialTable from 'material-table';
 
+
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -55,47 +58,64 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+// .-.. - ...--
+// -.-. ..- - .. .
+
 const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
   const [price, setPrice] = useState('');
+  const [error, setError] = useState(false);
 
-  const _handleChange = e => setPrice(e.target.value);
+  const _handleChange = e => {
+    if (e.target.value !== '') {
+      setError(false);
+    }
+    setPrice(e.target.value);
+  };
   const _handleClick = () => {
+    if (price === '') {
+      setError(true);
+      return;
+    }
+
     const payload = {
       crypto: rowData.name,
-      price: price,
+      price: parseInt(price),
       active: true,
     }
     store.dispatch(addSubscription(payload));
+
     closeModal(false);
   }
 
   return (
     <Card>
-      <form>
-        <CryptoListModalContent>
-          <CardContent>
-            Notify me when {rowData.name} drops under
-          </CardContent>
-          <CardContent>
-            <Input
-              id='standard-adornment-amount'
-              value={price}
-              onChange={_handleChange}
-              type='number'
-              startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            />
-          </CardContent>
-          <CardContent>
-            <Button
-              variant='contained'
-              onClick={() => _handleClick()}
-              color='primary'
-            >
-              Keep me updated
-            </Button>
-          </CardContent>
-        </CryptoListModalContent>
-      </form>
+      <CryptoListModalContent>
+        <CardContent>
+          Notify me when
+          <CryptoListCryptoName color='#007aa5'>{rowData.name}</CryptoListCryptoName>
+          drops under
+        </CardContent>
+        <CardContent>
+          <Input
+            id='standard-adornment-amount'
+            value={price}
+            onChange={_handleChange}
+            type='number'
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            error={error}
+          />
+          {error && <CryptoListInputError>Please enter a price.</CryptoListInputError>}
+        </CardContent>
+        <CardContent>
+          <Button
+            variant='contained'
+            onClick={_handleClick}
+            color='primary'
+          >
+            Keep me updated
+          </Button>
+        </CardContent>
+      </CryptoListModalContent>
     </Card>
   )
 });
@@ -128,10 +148,10 @@ function CryptoListTable({ rows }) {
           data={rows}
           icons={tableIcons}
           options={{
-            pageSize: 5,
+            pageSize: 6,
             pageSizeOptions: [0],
           }}
-          onRowClick={(event, rowData) => _handleClick(rowData)}
+          onRowClick={(e, rowData) => _handleClick(rowData)}
         />
       </CryptoListTableContainer>
       <Modal
