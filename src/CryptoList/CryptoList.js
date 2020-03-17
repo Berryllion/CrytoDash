@@ -78,7 +78,7 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
       'price': price,
     };
 
-    emailjs.send('outlook', 'subscribed', emailInfo.template_params, 'user_SSYB1IwzGR82K5uL1afQH')
+    emailjs.send('outlook', 'subscribed', emailInfo, 'user_SSYB1IwzGR82K5uL1afQH')
     .then((response) => {
       console.log('SUCCESS!', response.status, response.text);
     }, (err) => {
