@@ -55,7 +55,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-function CryptoListDetail({ rowData, closeModal, forwardRef }) {
+const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
   const [price, setPrice] = useState('');
 
   const _handleChange = e => setPrice(e.target.value);
@@ -70,31 +70,35 @@ function CryptoListDetail({ rowData, closeModal, forwardRef }) {
   }
 
   return (
-    <div style={{ position: 'absolute', top: '50', left: '50' }}>
-      <Card>
-        <form>
-          <CryptoListModalContent>
-            <CardContent>
-              Notify me when {rowData.name} drops under
-            </CardContent>
-            <CardContent>
-              <Input
-                id="standard-adornment-amount"
-                value={price}
-                onChange={_handleChange}
-                type='number'
-                startAdornment={<InputAdornment position="start">$</InputAdornment>}
-              />
-            </CardContent>
-            <CardContent>
-              <Button variant="contained" onClick={() => _handleClick()}>Keep me updated</Button>
-            </CardContent>
-          </CryptoListModalContent>
-        </form>
-      </Card>
-    </div>
+    <Card>
+      <form>
+        <CryptoListModalContent>
+          <CardContent>
+            Notify me when {rowData.name} drops under
+          </CardContent>
+          <CardContent>
+            <Input
+              id='standard-adornment-amount'
+              value={price}
+              onChange={_handleChange}
+              type='number'
+              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            />
+          </CardContent>
+          <CardContent>
+            <Button
+              variant='contained'
+              onClick={() => _handleClick()}
+              color='primary'
+            >
+              Keep me updated
+            </Button>
+          </CardContent>
+        </CryptoListModalContent>
+      </form>
+    </Card>
   )
-}
+});
 
 function CryptoListTable({ rows }) {
   const [open, setOpen] = useState(false);
@@ -133,6 +137,11 @@ function CryptoListTable({ rows }) {
       <Modal
         open={open}
         onClose={_handleClick}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <CryptoListDetail rowData={selected} closeModal={_handleClick} />
       </Modal>

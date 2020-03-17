@@ -5,7 +5,6 @@ import useSWR from 'swr';
 import store from './redux/store/index';
 import { updateCrypto } from "./redux/actions/index";
 
-import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import TopBar from './TopBar/TopBar';
@@ -41,12 +40,12 @@ function Home() {
   return (
     <>
       <TopBar />
-      <div style={{ padding: 20 }}>
-        <Grid container justify="center" spacing={5} direction="column">
-          <Grid item>
-            <CryptoList rows={rows} />
-          </Grid>
-        </Grid>
+      <div style={{
+        display:  'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <CryptoList rows={rows} />
       </div>
     </>
   );
