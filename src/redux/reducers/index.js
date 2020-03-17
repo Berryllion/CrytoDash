@@ -28,7 +28,7 @@ function rootReducer(state = initialState, action) {
     case UPDATE_CRYPTO:
       return {
         ...state,
-        cryptocurrencies: action.payload.cryptocurrencies
+        cryptocurrencies: action.payload.slice()
       }
     default:
       return state;

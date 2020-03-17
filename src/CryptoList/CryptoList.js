@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 
-import useSWR from 'swr';
+import emailjs from 'emailjs-com';
 
 import {
   CryptoListContainer,
@@ -66,32 +66,16 @@ const tableIcons = {
 // c*:
 // -.-- --- ..-  - .... .  -.-. ..- - .. .
 
-// const fetcher = url => fetch(url).then(r => r.json())
-
 const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
   const [price, setPrice] = useState('');
   const [error, setError] = useState(false);
 
-  // const _sendEmail = () => {
-  //   const data = {
-  //     service_id: 'outlook',
-  //     template_id: 'subscribed',
-  //     user_id: 'user_SSYB1IwzGR82K5uL1afQH',
-  //     template_params: {
-  //       'email': store.getState()['email'],
-  //       'username': store.getState()['username'],
-  //       'cryto': rowData.name,
-  //       'price': price,
-  //     }
-  //   };
-
-  //   const { data: emailSent } = useSWR(
-  //     ['https://api.emailjs.com/api/v1.0/email/send', data],
-  //     fetcher)
-  //   ;
-
-  //   console.log(emailSent)
-  // }
+    const emailInfo = {
+      'email': store.getState()['email'],
+      'username': store.getState()['username'],
+      'crypto': rowData.name,
+      'price': price,
+    };
 
   const _handleChange = e => {
     if (e.target.value !== '') {
@@ -99,11 +83,18 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
     }
     setPrice(e.target.value);
   };
-  const _handleClick = () => {
+  const _handleClick = async () => {
     if (price === '') {
       setError(true);
       return;
     }
+
+    emailjs.send('outlook', 'subscribed', emailInfo.template_params, 'user_SSYB1IwzGR82K5uL1afQH')
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+    }, (err) => {
+      console.log('FAILED...', err);
+    });
 
     const payload = {
       crypto: rowData.name,
@@ -111,7 +102,6 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
       active: true,
     }
     store.dispatch(addSubscription(payload));
-    // _sendEmail();
     closeModal(false);
   }
 
