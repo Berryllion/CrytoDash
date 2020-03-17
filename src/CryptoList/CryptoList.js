@@ -70,6 +70,7 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
   const [price, setPrice] = useState('');
   const [error, setError] = useState(false);
 
+  const _sendConfirmationEmail = () => {
     const emailInfo = {
       'email': store.getState()['email'],
       'username': store.getState()['username'],
@@ -77,25 +78,27 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
       'price': price,
     };
 
-  const _handleChange = e => {
-    if (e.target.value !== '') {
-      setError(false);
-    }
-    setPrice(e.target.value);
-  };
-  const _handleClick = async () => {
-    if (price === '') {
-      setError(true);
-      return;
-    }
-
     emailjs.send('outlook', 'subscribed', emailInfo.template_params, 'user_SSYB1IwzGR82K5uL1afQH')
     .then((response) => {
       console.log('SUCCESS!', response.status, response.text);
     }, (err) => {
       console.log('FAILED...', err);
     });
+  }
 
+  const _handleChange = e => {
+    if (e.target.value !== '') {
+      setError(false);
+    }
+    setPrice(e.target.value);
+  };
+  const _handleClick = () => {
+    if (price === '') {
+      setError(true);
+      return;
+    }
+
+    _sendConfirmationEmail();
     const payload = {
       crypto: rowData.name,
       price: parseInt(price),

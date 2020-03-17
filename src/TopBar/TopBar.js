@@ -1,18 +1,23 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+
+import { connect } from "react-redux";
 
 import {
   TopBarContainer,
+  TopBarDrawerEmpty,
 } from './TopBarStyle';
 
-import { fade, makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
+import { makeStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
+import ListItemText from '@material-ui/core/ListItemText';
+import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
 import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 const useStyles = makeStyles(theme => ({
   menuButton: {
@@ -25,79 +30,80 @@ const useStyles = makeStyles(theme => ({
       display: 'block',
     },
   },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  },
-  searchIcon: {
-    width: theme.spacing(7),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: 200,
-      '&:focus': {
-        width: 300,
-      },
-    },
+  list: {
+    width: 250,
   },
 }));
 
 function TopBar() {
   const classes = useStyles();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const _toggleDrawer = open => e => {
+    if (e.type === 'keydown' && (e.key === 'Tab' || e.key === 'Shift')) {
+      return;
+    }
+    setDrawerOpen(open);
+  }
+
+  const mapStateToProps = state => {
+    return { subscriptions: state.subscriptions };
+  };
+
+  const SubscriptionsDrawerComponent = ({ subscriptions }) => {
+    if (subscriptions.length === 0) {
+      return (
+        <TopBarDrawerEmpty>
+          No cryptocurrency followed at the moment
+        </TopBarDrawerEmpty>
+      );
+    }
+    return (
+      <div
+        role="presentation"
+        onClick={_toggleDrawer(false)}
+        onKeyDown={_toggleDrawer(false)}
+        className={classes.list}
+      >
+        <List>
+          {
+            subscriptions.map((e, i) =>
+              <ListItem button key={i.toString()}>
+                <ListItemText primary={e.crypto} />
+              </ListItem>
+            )
+          }
+        </List>
+      </div>
+    )
+  }
+
+  const SubscriptionsDrawer = connect(mapStateToProps)(SubscriptionsDrawerComponent);
 
   return (
-    <TopBarContainer>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            CryptoDash
-          </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search a cryptocurrency…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
-        </Toolbar>
-      </AppBar>
-    </TopBarContainer>
+    <>
+      <TopBarContainer>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="open drawer"
+              onClick={_toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography className={classes.title} variant="h6" noWrap>
+              CryptoDash
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </TopBarContainer>
+      <Drawer open={drawerOpen} onClose={_toggleDrawer(false)}>
+        <SubscriptionsDrawer />
+      </Drawer>
+    </>
   );
 }
 
