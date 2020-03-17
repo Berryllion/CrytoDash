@@ -1,3 +1,4 @@
+export const LOG_USER = "LOG_USER";
 export const ADD_SUBSCRIPTION = "ADD_SUBSCRIPTION";
 export const UPDATE_CRYPTO = "UPDATE_CRYPTO";
 

@@ -26,7 +26,9 @@ export const CryptoListCryptoName = styled.span`
   color: ${props => props.color ? props.color : '#addfad'};
 `;
 
-export const CryptoListInputError = styled.span`
+  export const CryptoListInputError = styled.span`
+  margin-top: 5px;
+  font-size: 0.8em;
   color: #f44336;
   display: block;
 `;

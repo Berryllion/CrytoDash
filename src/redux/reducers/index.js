@@ -1,15 +1,25 @@
 import {
+  LOG_USER,
   ADD_SUBSCRIPTION,
-  UPDATE_CRYPTO
+  UPDATE_CRYPTO,
 } from '../constants/action-types';
 
 const initialState = {
+  username: '',
+  email: '',
   subscriptions: [],
   cryptocurrencies: [],
 };
 
 function rootReducer(state = initialState, action) {
   switch (action.type) {
+    case LOG_USER: {
+      return {
+        ...state,
+        username: action.payload.username,
+        email: action.payload.email,
+      }
+    }
     case ADD_SUBSCRIPTION:
       return {
         ...state,
@@ -18,7 +28,7 @@ function rootReducer(state = initialState, action) {
     case UPDATE_CRYPTO:
       return {
         ...state,
-        cryptocurrencies : state.cryptocurrencies
+        cryptocurrencies: action.payload.cryptocurrencies
       }
     default:
       return state;

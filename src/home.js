@@ -3,15 +3,30 @@ import React from 'react';
 import useSWR from 'swr';
 
 import store from './redux/store/index';
-import { updateCrypto } from "./redux/actions/index";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import TopBar from './TopBar/TopBar';
 import CryptoList from './CryptoList/CryptoList';
+import Logging from './Logging/Logging';
+
+function HelloUser() {
+  const username = store.getState()['username'];
+
+  return (
+    <div style={{
+      color: '#fff',
+      fontSize: '2em',
+      textAlign: 'center'
+    }}>
+      Hello {username}.
+    </div>
+  );
+}
 
 function Home() {
   const [rows, setRows] = React.useState([]);
+  const [logged, setLogged] = React.useState(false);
 
   const { data: datacrypto } = useSWR('https://rest.coinapi.io/v1/assets');
   const { data: dataicon } = useSWR('https://rest.coinapi.io/v1/assets/icons/16?', { refreshInterval: 0 });
@@ -44,19 +59,35 @@ function Home() {
     );
   }
 
-  store.dispatch(updateCrypto(new Array(['potate', 'tomate'])));
-
   return (
     <>
-      <TopBar />
+    {
+      !logged &&
       <div style={{
         height: '90vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <CryptoList rows={rows} />
+        <Logging handleLogging={setLogged} />
       </div>
+    }
+    {
+      logged &&
+      <>
+        <TopBar />
+        <div style={{
+          height: '90vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}>
+          <HelloUser />
+          <CryptoList rows={rows} />
+        </div>
+      </>
+    }
     </>
   );
 }

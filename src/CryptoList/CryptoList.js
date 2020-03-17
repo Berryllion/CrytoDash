@@ -1,5 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 
+import useSWR from 'swr';
+
 import {
   CryptoListContainer,
   CryptoListTableContainer,
@@ -11,6 +13,7 @@ import {
 import store from "../redux/store/index";
 import {
   addSubscription,
+  updateCrypto,
 } from "../redux/actions/index";
 
 import Modal from '@material-ui/core/Modal';
@@ -60,10 +63,35 @@ const tableIcons = {
 
 // .-.. - ...--
 // -.-. ..- - .. .
+// c*:
+// -.-- --- ..-  - .... .  -.-. ..- - .. .
+
+// const fetcher = url => fetch(url).then(r => r.json())
 
 const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
   const [price, setPrice] = useState('');
   const [error, setError] = useState(false);
+
+  // const _sendEmail = () => {
+  //   const data = {
+  //     service_id: 'outlook',
+  //     template_id: 'subscribed',
+  //     user_id: 'user_SSYB1IwzGR82K5uL1afQH',
+  //     template_params: {
+  //       'email': store.getState()['email'],
+  //       'username': store.getState()['username'],
+  //       'cryto': rowData.name,
+  //       'price': price,
+  //     }
+  //   };
+
+  //   const { data: emailSent } = useSWR(
+  //     ['https://api.emailjs.com/api/v1.0/email/send', data],
+  //     fetcher)
+  //   ;
+
+  //   console.log(emailSent)
+  // }
 
   const _handleChange = e => {
     if (e.target.value !== '') {
@@ -83,7 +111,7 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
       active: true,
     }
     store.dispatch(addSubscription(payload));
-
+    // _sendEmail();
     closeModal(false);
   }
 
@@ -93,7 +121,7 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
         <CardContent>
           Notify me when
           <CryptoListCryptoName color='#007aa5'>{rowData.name}</CryptoListCryptoName>
-          drops under
+          drops under:
         </CardContent>
         <CardContent>
           <Input
@@ -123,6 +151,8 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
 function CryptoListTable({ rows }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(undefined);
+
+  store.dispatch(updateCrypto(rows));
 
   const _handleClick = (rowData) => {
     setSelected(rowData);
