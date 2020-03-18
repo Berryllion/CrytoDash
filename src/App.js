@@ -23,7 +23,7 @@ function App() {
   return (
       <SWRConfig
         value={{
-          refreshInterval: 10000,
+          refreshInterval: 60000,
           fetcher: fetcher
         }}
       >
