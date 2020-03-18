@@ -1,7 +1,5 @@
 import React, { forwardRef, useState } from 'react';
 
-import emailjs from 'emailjs-com';
-
 import {
   CryptoListContainer,
   CryptoListTableContainer,
@@ -21,6 +19,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -39,7 +39,6 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import MaterialTable from 'material-table';
-
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -61,30 +60,18 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-// .-.. - ...--
-// -.-. ..- - .. .
-// c*:
-// -.-- --- ..-  - .... .  -.-. ..- - .. .
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
-const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
+const CryptoListDetail = React.forwardRef(({
+  rowData,
+  closeModal,
+  setSubscribed,
+  setSubscribedError
+}, ref) => {
   const [price, setPrice] = useState('');
   const [error, setError] = useState(false);
-
-  const _sendConfirmationEmail = () => {
-    const emailInfo = {
-      'email': store.getState()['email'],
-      'username': store.getState()['username'],
-      'crypto': rowData.name,
-      'price': price,
-    };
-
-    emailjs.send('outlook', 'subscribed', emailInfo, 'user_SSYB1IwzGR82K5uL1afQH')
-    .then((response) => {
-      console.log('SUCCESS!', response.status, response.text);
-    }, (err) => {
-      console.log('FAILED...', err);
-    });
-  }
 
   const _handleChange = e => {
     if (e.target.value !== '') {
@@ -98,52 +85,62 @@ const CryptoListDetail = React.forwardRef(({ rowData, closeModal }, ref) => {
       return;
     }
 
-    _sendConfirmationEmail();
+    if (store.getState()['subscriptions'].find(e => e.crypto === rowData.name)) {
+      setSubscribedError(true);
+      closeModal(false);
+      return;
+    }
+
     const payload = {
       crypto: rowData.name,
-      price: parseInt(price),
+      price: parseFloat(price),
       active: true,
+      sent: false,
     }
     store.dispatch(addSubscription(payload));
     closeModal(false);
+    setSubscribed(true);
   }
 
   return (
-    <Card>
-      <CryptoListModalContent>
-        <CardContent>
-          Notify me when
-          <CryptoListCryptoName color='#007aa5'>{rowData.name}</CryptoListCryptoName>
-          drops under:
-        </CardContent>
-        <CardContent>
-          <Input
-            id='standard-adornment-amount'
-            value={price}
-            onChange={_handleChange}
-            type='number'
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            error={error}
-          />
-          {error && <CryptoListInputError>Please enter a price.</CryptoListInputError>}
-        </CardContent>
-        <CardContent>
-          <Button
-            variant='contained'
-            onClick={_handleClick}
-            color='primary'
-          >
-            Keep me updated
-          </Button>
-        </CardContent>
-      </CryptoListModalContent>
-    </Card>
+
+      <Card>
+        <CryptoListModalContent>
+          <CardContent>
+            Notify me when
+            <CryptoListCryptoName color='#007aa5'>{rowData.name}</CryptoListCryptoName>
+            drops under:
+          </CardContent>
+          <CardContent>
+            <Input
+              id='standard-adornment-amount'
+              value={price}
+              onChange={_handleChange}
+              type='number'
+              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              error={error}
+            />
+            {error && <CryptoListInputError>Please enter a price.</CryptoListInputError>}
+          </CardContent>
+          <CardContent>
+            <Button
+              variant='contained'
+              onClick={_handleClick}
+              color='primary'
+            >
+              Keep me updated
+            </Button>
+          </CardContent>
+        </CryptoListModalContent>
+      </Card>
   )
 });
 
 function CryptoListTable({ rows }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(undefined);
+  const [subscribed, setSubscribed] = useState(false);
+  const [subscribedError, setSubscribedError] = useState(false);
 
   store.dispatch(updateCrypto(rows));
 
@@ -152,8 +149,26 @@ function CryptoListTable({ rows }) {
     setOpen(!open);
   }
 
+  const _handleSnack = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSubscribed(false);
+    setSubscribedError(false);
+  };
+
   return (
     <>
+      <Snackbar open={subscribed} autoHideDuration={6000} onClose={_handleSnack}>
+        <Alert onClose={_handleSnack} severity="success">
+          Successfully subscribed!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={subscribedError} autoHideDuration={6000} onClose={_handleSnack}>
+        <Alert onClose={_handleSnack} severity="warning">
+          You are already subscribed to this cryptocurrency.
+        </Alert>
+      </Snackbar>
       <CryptoListTableContainer>
         <MaterialTable
           title="Cryptocurrencies"
@@ -186,7 +201,12 @@ function CryptoListTable({ rows }) {
           justifyContent: 'center',
         }}
       >
-        <CryptoListDetail rowData={selected} closeModal={_handleClick} />
+        <CryptoListDetail
+          rowData={selected}
+          closeModal={_handleClick}
+          setSubscribed={setSubscribed}
+          setSubscribedError={setSubscribedError}
+        />
       </Modal>
     </>
   );
