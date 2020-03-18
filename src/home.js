@@ -39,7 +39,7 @@ function Home() {
   const [emailError, setEmailError] = useState(false);
   const [conditionMet, setConditionMet] = useState({
     name: '',
-    price: 0,
+    usdprice: 0,
     valid: false
   });
 
@@ -53,7 +53,7 @@ function Home() {
     setEmailError(false);
     setConditionMet({
       name: '',
-      price: 0,
+      usdprice: 0,
       valid: false
     });
   };
@@ -63,14 +63,14 @@ function Home() {
       'email': store.getState()['email'],
       'username': store.getState()['username'],
       'crypto': info['crypto'],
-      'price': info['price'],
+      'usdprice': info['usdprice'],
     };
 
     emailjs.send('outlook', 'subscribed', emailInfo, 'user_SSYB1IwzGR82K5uL1afQH')
     .then((response) => {
       setConditionMet({
         name: info['crypto'],
-        price: info['price'],
+        usdprice: info['usdprice'],
         valid: true
       });
     }, (err) => {
@@ -99,10 +99,10 @@ function Home() {
   useEffect(() => {
     if (rows.length !== 0) {
       store.getState()['subscriptions'].map((subscription) => {
-        const match = rows.find((e) => subscription['crypto'] === e['name']);
+        const match = rows.find(e => subscription['crypto'] === e['name']);
 
         if (subscription['active'] && !subscription['sent'] &&
-        (match['usdprice'] <= subscription['price'])) {
+        (match['usdprice'] <= subscription['usdprice'])) {
           const payload = { ...subscription, sent: true }
           store.dispatch(updateSubscription(payload));
           _sendEmail(subscription);
@@ -144,7 +144,7 @@ function Home() {
           <Snackbar open={conditionMet['valid']} autoHideDuration={6000} onClose={_handleSnack}>
             <Alert onClose={_handleSnack} severity='info'>
               {
-                conditionMet['name'] + ' has dropped under ' + conditionMet['price'] + ' US$.'
+                conditionMet['name'] + ' has dropped under ' + conditionMet['usdprice'] + ' US$.'
               }
             </Alert>
           </Snackbar>

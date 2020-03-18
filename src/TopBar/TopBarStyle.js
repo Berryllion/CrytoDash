@@ -20,13 +20,15 @@ export const TopBarDrawerEditContainer = styled.div`
 `;
 
 export const TopBarDrawerEdit = styled.div`
-  padding: 10px 0 10px 15px;
+  padding: 15px 15px 15px 15px;
   text-align: center;
   display: flex;
-  align-content: center;
+  align-content: space-evenly;
   align-items: center;
 `;
 
-export const TopBarDrawerPrice = styled.span`
-  margin-right: 13px;
+export const TopBarDrawerPrice = styled.div`
+  display: flex;
+  align-content: space-evenly;
+  align-items: center;
 `;

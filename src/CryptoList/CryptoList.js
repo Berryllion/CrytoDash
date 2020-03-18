@@ -70,17 +70,17 @@ const CryptoListDetail = React.forwardRef(({
   setSubscribed,
   setSubscribedError
 }, ref) => {
-  const [price, setPrice] = useState('');
+  const [usdprice, setUsdPrice] = useState('');
   const [error, setError] = useState(false);
 
   const _handleChange = e => {
     if (e.target.value !== '') {
       setError(false);
     }
-    setPrice(e.target.value);
+    setUsdPrice(e.target.value);
   };
   const _handleClick = () => {
-    if (price === '') {
+    if (usdprice === '') {
       setError(true);
       return;
     }
@@ -93,7 +93,7 @@ const CryptoListDetail = React.forwardRef(({
 
     const payload = {
       crypto: rowData.name,
-      price: parseFloat(price),
+      usdprice: parseFloat(usdprice),
       active: true,
       sent: false,
     }
@@ -114,13 +114,13 @@ const CryptoListDetail = React.forwardRef(({
           <CardContent>
             <Input
               id='standard-adornment-amount'
-              value={price}
+              value={usdprice}
               onChange={_handleChange}
               type='number'
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
               error={error}
             />
-            {error && <CryptoListInputError>Please enter a price.</CryptoListInputError>}
+            {error && <CryptoListInputError>Please enter a usdprice.</CryptoListInputError>}
           </CardContent>
           <CardContent>
             <Button
@@ -179,9 +179,9 @@ function CryptoListTable({ rows }) {
               ),
               cellStyle: { width: '100px' },
             },
-            { title: 'ID', field: 'id' },
+            { title: 'ID', field: 'id', defaultSort: 'asc' },
             { title: 'Name', field: 'name' },
-            { title: 'USD price', field: 'usdprice', type: 'numeric' },
+            { title: 'USD usdprice', field: 'usdprice', type: 'numeric'},
           ]}
           data={rows}
           icons={tableIcons}

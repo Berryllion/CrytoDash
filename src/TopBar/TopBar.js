@@ -64,6 +64,9 @@ function SubscriptionsDrawerItem({ info, i }) {
   const [newPrice, setNewPrice] = useState('');
   const [checked, setChecked] = useState(info['active']);
 
+  const currentCryptoPrice = store.getState()['cryptocurrencies']
+    .find(e => e['name'] === info['crypto'])['usdprice']
+
   const _priceEdit = e => {
     setNewPrice(e.target.value);
   }
@@ -77,9 +80,9 @@ function SubscriptionsDrawerItem({ info, i }) {
   return (
     <>
       <ListItem button key={i.toString()}>
-        <ListItemText className={classes.listText} primary={info.crypto} />
+        <ListItemText className={classes.listText} primary={info['crypto']} />
         <TopBarDrawerPrice>
-          {info.price} US$
+          {currentCryptoPrice.toFixed(3)} $USD
         </TopBarDrawerPrice>
         <IconButton onClick={() => setEdit(!edit)}>
           <EditIcon />
@@ -95,6 +98,9 @@ function SubscriptionsDrawerItem({ info, i }) {
         edit &&
         <TopBarDrawerEditContainer>
           <TopBarDrawerEdit>
+            Price limit set: {info['usdprice']} $USD.
+          </TopBarDrawerEdit>
+          <TopBarDrawerEdit>
             <Input
               id='standard-adornment-amount'
               value={newPrice}
@@ -103,7 +109,7 @@ function SubscriptionsDrawerItem({ info, i }) {
               startAdornment={<InputAdornment position="start">New price</InputAdornment>}
             />
             <IconButton onClick={() => {
-              const payload = { ...info, price: parseFloat(newPrice) }
+              const payload = { ...info, usdprice: parseFloat(newPrice) }
               store.dispatch(updateSubscription(payload));
               setNewPrice('');
               setEdit(false);
@@ -122,7 +128,7 @@ function SubscriptionsDrawerItem({ info, i }) {
                   color='primary'
                 />
               }
-              label="Get notification"
+              label="Send alert"
             />
           </TopBarDrawerEdit>
         </TopBarDrawerEditContainer>
