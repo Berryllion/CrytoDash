@@ -6,7 +6,7 @@ export const TopBarContainer = styled.div`
 
 export const TopBarDrawerEmpty = styled.div`
   height: 100vh;
-  width: 300px;
+  width: 350px;
   padding: 20px;
   text-align: center;
   display: flex;
@@ -20,7 +20,7 @@ export const TopBarDrawerEditContainer = styled.div`
 `;
 
 export const TopBarDrawerEdit = styled.div`
-  padding: 15px 15px 15px 15px;
+  padding: 15px 15px 5px 15px;
   text-align: center;
   display: flex;
   align-content: space-evenly;

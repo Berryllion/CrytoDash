@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   list: {
-    width: '300px',
+    width: '350px',
   },
   listText: {
     color: '#007aa5',
@@ -66,6 +66,8 @@ function SubscriptionsDrawerItem({ info, i }) {
 
   const currentCryptoPrice = store.getState()['cryptocurrencies']
     .find(e => e['name'] === info['crypto'])['usdprice']
+  const currentCryptoId = store.getState()['cryptocurrencies']
+    .find(e => e['name'] === info['crypto'])['id']
 
   const _priceEdit = e => {
     setNewPrice(e.target.value);
@@ -80,7 +82,7 @@ function SubscriptionsDrawerItem({ info, i }) {
   return (
     <>
       <ListItem button key={i.toString()}>
-        <ListItemText className={classes.listText} primary={info['crypto']} />
+        <ListItemText className={classes.listText} primary={currentCryptoId} />
         <TopBarDrawerPrice>
           {currentCryptoPrice.toFixed(3)} $USD
         </TopBarDrawerPrice>
