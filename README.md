@@ -35,6 +35,7 @@ yarn start
 ## Built With
 
 * [ReactJS](https://reactjs.org/)
+* [Redux](http://redux.js.org/)
 * [Material-UI](https://material-ui.com/)
 * [EmailJS](https://www.emailjs.com/)
 * [Material-Table](https://material-table.com/)
